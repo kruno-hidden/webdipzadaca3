@@ -22,8 +22,10 @@ function removeErrorMess(id){
 
 function checkUsername(){
     var username = $('#korisnicko').val();
+    var ok;
     $.ajax({
         url:'korisnik.php?korisnik='+username,
+        async:false,
         type: 'GET',
         dataType: 'xml',
         success: function(xml) {
@@ -31,13 +33,14 @@ function checkUsername(){
             var num = parseInt(data.text());
             if(num===1){
                 addErrorMess(korisnicko, "Već postoji!");
-                return false;
+                ok = false;
             } else {
                 removeErrorMess("korisnicko");
-                return true;
+                ok = true;
             }
         }
-    });      
+    });
+    return ok;
 }
 
 function checkPassword(){
@@ -74,19 +77,6 @@ function checkSex(){
     }
 }
 
-var checkRegForm = function (e) {
-    console.log("\n\n");    
-    var imeOk = checkText(document.getElementById("ime").value);
-    var prezimeOk = checkText(document.getElementById("prezime").value);
-    var passOk = checkPassword();
-    var sexOk = checkSex();
-    var usernameOk = checkUsername();
-    console.log("User: " + usernameOk);
-    if(!(imeOk && prezimeOk && passOk && sexOk && usernameOk))
-        e.preventDefault();
-    selectFirstError();
-};
-
 function korisnickoIsEmpty(){
     if(!document.getElementById("korisnicko").value){
     	addErrorMess(korisnicko, "Obavezno polje");
@@ -109,6 +99,17 @@ function lozinkaIsEmpty(){
     }
 }
 
+var checkRegForm = function (e) {
+    var imeOk = checkText(document.getElementById("ime").value);
+    var prezimeOk = checkText(document.getElementById("prezime").value);
+    var passOk = checkPassword();
+    var sexOk = checkSex();
+    var usernameOk = checkUsername();
+    if(!(imeOk && prezimeOk && passOk && sexOk && usernameOk))
+        e.preventDefault();
+    selectFirstError();
+};
+
 var checkLoginForm = function (e) {
     if(korisnickoIsEmpty()||lozinkaIsEmpty()) e.preventDefault();
 };
@@ -123,7 +124,6 @@ function getCitys(){
     var mjesta = new Array();    
     $.getJSON("podaci/gradovi.json", function(data){
     $.each(data, function (index, value) {
-        console.log(value);
         mjesta.push(value);
     });
 });
