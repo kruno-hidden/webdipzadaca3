@@ -210,31 +210,49 @@ $('#btnJSON').click(function(){btnJSON();});
 
 
 function btnXML(){
-    $('table').html('');
+    initTable();
     dohvatiXML();
 }
 
 function btnJSON(){
-    $('table').html('');
+    initTable();    
     dohvatiJSON();
 }
 
+function initTable(){
+    $('table').html('\
+<tr>\
+<th>id_korisnik</th>\
+<th>id_status</th>\
+<th>id_tip</th>\
+<th>korisnicko_ime</th>\
+<th>ime</th>\
+<th>prezime</th>\
+<th>email</th>\
+<th>slika</th>\
+<th>aktivacijski_kod</th>\
+<th>neuspjesne_prijave</th>\
+<th>blokiran_do</th>\
+<th>lozinka</th>\
+</tr>\
+');
+}
 
 function dodajNoviRed(data){
     var $red = $('\
 <tr>\
-<td>'+data[0]+'</td>\
-<td>'+data[1]+'</td>\
-<td>'+data[2]+'</td>\
-<td>'+data[3]+'</td>\
-<td>'+data[4]+'</td>\
-<td>'+data[5]+'</td>\
-<td>'+data[6]+'</td>\
-<td>'+data[7]+'</td>\
-<td>'+data[8]+'</td>\
-<td>'+data[9]+'</td>\
-<td>'+data[10]+'</td>\
-<td>'+data[11]+'</td>\
+<td>'+$(data).attr('id_korisnik')+'</td>\
+<td>'+$(data).attr('id_status')+'</td>\
+<td>'+$(data).attr('id_tip')+'</td>\
+<td>'+$(data).attr('korisnicko_ime')+'</td>\
+<td>'+$(data).attr('ime')+'</td>\
+<td>'+$(data).attr('prezime')+'</td>\
+<td>'+$(data).attr('email')+'</td>\
+<td>'+$(data).attr('slika')+'</td>\
+<td>'+$(data).attr('aktivacijski_kod')+'</td>\
+<td>'+$(data).attr('neuspjesne_prijave')+'</td>\
+<td>'+$(data).attr('blokiran_do')+'</td>\
+<td>'+$(data).attr('lozinka')+'</td>\
 </tr>\
 ');
     $('table').append($red);
@@ -248,20 +266,7 @@ function dohvatiXML(){
         success: function(xml) {
             $(xml).find('korisnici').each(function() {               
                 $(this).children().each(function(){
-                    var data = new Array();
-                    data.push($(this).attr('id_korisnik'));
-                    data.push($(this).attr('id_status'));
-                    data.push($(this).attr('id_tip'));
-                    data.push($(this).attr('korisnicko_ime'));
-                    data.push($(this).attr('ime'));
-                    data.push($(this).attr('prezime'));
-                    data.push($(this).attr('email'));
-                    data.push($(this).attr('slika'));
-                    data.push($(this).attr('aktivacijski_kod'));
-                    data.push($(this).attr('neuspjesne_prijave'));
-                    data.push($(this).attr('blokiran_do'));
-                    data.push($(this).attr('lozinka'));
-                    dodajNoviRed(data);
+                    dodajNoviRed(this);
                 });                
             });
         }
@@ -272,20 +277,7 @@ function dohvatiJSON(){
     var data = new Array();    
     $.getJSON("podaci/korisnici.json", function(json){
         $.each(json, function (index, value) {            
-            var data = new Array();
-                    data.push($(this).attr('id_korisnik'));
-                    data.push($(this).attr('id_status'));
-                    data.push($(this).attr('id_tip'));
-                    data.push($(this).attr('korisnicko_ime'));
-                    data.push($(this).attr('ime'));
-                    data.push($(this).attr('prezime'));
-                    data.push($(this).attr('email'));
-                    data.push($(this).attr('slika'));
-                    data.push($(this).attr('aktivacijski_kod'));
-                    data.push($(this).attr('neuspjesne_prijave'));
-                    data.push($(this).attr('blokiran_do'));
-                    data.push($(this).attr('lozinka'));
-                    dodajNoviRed(data);
+            dodajNoviRed(value);
         });
-    });    
+    });
 }
