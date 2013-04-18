@@ -20,6 +20,26 @@ function removeErrorMess(id){
     table.deleteRow(remPos);
 }
 
+function checkUsername(){
+    var username = $('#korisnicko').val();
+    $.ajax({
+        url:'korisnik.php?korisnik='+username,
+        type: 'GET',
+        dataType: 'xml',
+        success: function(xml) {
+            var data = $(xml).find('korisnici');
+            var num = parseInt(data.text());
+            if(num===1){
+                addErrorMess(korisnicko, "Već postoji!");
+                return false;
+            } else {
+                removeErrorMess("korisnicko");
+                return true;
+            }
+        }
+    });      
+}
+
 function checkPassword(){
     var lozinka1 = document.getElementById("lozinka");
     var lozinka2 = document.getElementById("lozinka2");
@@ -57,14 +77,12 @@ function checkSex(){
 var checkRegForm = function (e) {
     console.log("\n\n");    
     var imeOk = checkText(document.getElementById("ime").value);
-    console.log("imeOk: "+imeOk);
     var prezimeOk = checkText(document.getElementById("prezime").value);
-    console.log("prezimeOk: "+prezimeOk);
     var passOk = checkPassword();
-    console.log("passOk: "+passOk);
     var sexOk = checkSex();
-    console.log("sexOk: "+sexOk);
-    if(!(imeOk && prezimeOk && passOk && sexOk))
+    var usernameOk = checkUsername();
+    console.log("User: " + usernameOk);
+    if(!(imeOk && prezimeOk && passOk && sexOk && usernameOk))
         e.preventDefault();
     selectFirstError();
 };
@@ -101,6 +119,17 @@ function  selectFirstError() {
     document.getElementById(id).focus();    
 }
 
+function getCitys(){
+    var mjesta = new Array();    
+    $.getJSON("podaci/gradovi.json", function(data){
+    $.each(data, function (index, value) {
+        console.log(value);
+        mjesta.push(value);
+    });
+});
+    return mjesta;
+}
+
 window.onload = function() {  
     /* === Define color change === */
     //polje koje ima fokus je označeno drugom css klasom od ostalih (boja, okvir, ... - po želji)
@@ -133,7 +162,7 @@ window.onload = function() {
     //provjera da li ime i prezime počinju velikim slovom, da li sadržavaju samo slova
     var ime = document.getElementById("ime");
     if(ime)
-        ime.addEventListener("blur",function(){            
+        ime.addEventListener("blur",function(){
             if(!checkText(ime.value)){
                 addErrorMess(ime, "Prvo veliko, ostalo malo");
             } else {
@@ -153,8 +182,16 @@ window.onload = function() {
     /* === onSubmit - registracija ===*/
     //selectbox za odabir spola ima vrijednosti 'odaberi','ženski','muški',
     var forma = document.getElementById("regForm");    
-    if(forma)
+    if(forma){
         forma.addEventListener('submit', checkRegForm, false);
+        $('#korisnicko').blur(function(){checkUsername();});
+        $(function() {
+            var popisMjesta = getCitys();
+            $("#mjesto").autocomplete({
+            source: popisMjesta
+                });
+          });
+    }
     
     /* === onSubmit - login ===*/
     var forma = document.getElementById("loginForm");   
@@ -163,4 +200,5 @@ window.onload = function() {
         korisnicko.addEventListener("blur",function(){korisnickoIsEmpty();});
         lozinka.addEventListener("blur",function(){lozinkaIsEmpty();});
     }
+    
 };
