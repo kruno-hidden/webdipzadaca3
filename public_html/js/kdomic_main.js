@@ -134,7 +134,7 @@ window.onload = function() {
     /* === Define color change === */
     //polje koje ima fokus je označeno drugom css klasom od ostalih (boja, okvir, ... - po želji)
     var inputs = document.getElementsByTagName("input");
-    if(inputs){
+    if(inputs && inputs.length){
         inputs[0].className = "selectInput";
         for(var i=0; i<inputs.length; i++){
             inputs[i].addEventListener("focus",function(){this.className = "selectInput";});
@@ -202,3 +202,78 @@ window.onload = function() {
     }
     
 };
+
+/* === Tablica korisnika ===*/
+
+$('#btnXML').click(function(){btnXML();});
+$('#btnJSON').click(function(){btnJSON();});
+
+
+function btnXML(){
+    $('table').html('');
+    dohvatiXML();
+}
+
+function btnJSON(){
+    $('table').html('');
+    dohvatiJSON();
+}
+
+
+function dodajNoviRed(data){
+    var $red = $('\
+<tr>\
+<td>'+data[0]+'</td>\
+<td>'+data[1]+'</td>\
+<td>'+data[2]+'</td>\
+<td>'+data[3]+'</td>\
+<td>'+data[4]+'</td>\
+<td>'+data[5]+'</td>\
+<td>'+data[6]+'</td>\
+<td>'+data[7]+'</td>\
+<td>'+data[8]+'</td>\
+<td>'+data[9]+'</td>\
+<td>'+data[10]+'</td>\
+<td>'+data[11]+'</td>\
+</tr>\
+');
+    $('table').append($red);
+}
+
+function dohvatiXML(){
+    $.ajax({
+        url:'podaci/korisnici.xml',
+        type: 'GET',
+        dataType: 'xml',
+        success: function(xml) {
+            $(xml).find('korisnici').each(function() {               
+                $(this).children().each(function(){
+                    var data = new Array();
+                    data.push($(this).attr('id_korisnik'));
+                    data.push($(this).attr('id_status'));
+                    data.push($(this).attr('id_tip'));
+                    data.push($(this).attr('korisnicko_ime'));
+                    data.push($(this).attr('ime'));
+                    data.push($(this).attr('prezime'));
+                    data.push($(this).attr('email'));
+                    data.push($(this).attr('slika'));
+                    data.push($(this).attr('aktivacijski_kod'));
+                    data.push($(this).attr('neuspjesne_prijave'));
+                    data.push($(this).attr('blokiran_do'));
+                    data.push($(this).attr('lozinka'));
+                    dodajNoviRed(data);
+                });                
+            });
+        }
+    });
+}
+
+function dohvatiJSON(){
+    var mjesta = new Array();    
+    $.getJSON("podaci/gradovi.json", function(data){
+        $.each(data, function (index, value) {
+            console.log(value);
+            mjesta.push(value);
+        });
+    });
+}
