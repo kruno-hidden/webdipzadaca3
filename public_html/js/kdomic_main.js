@@ -268,12 +268,24 @@ function dohvatiXML(){
     });
 }
 
-function dohvatiJSON(){
-    var mjesta = new Array();    
-    $.getJSON("podaci/gradovi.json", function(data){
-        $.each(data, function (index, value) {
-            console.log(value);
-            mjesta.push(value);
+function dohvatiJSON(){   
+    var data = new Array();    
+    $.getJSON("podaci/korisnici.json", function(json){
+        $.each(json, function (index, value) {            
+            var data = new Array();
+                    data.push($(this).attr('id_korisnik'));
+                    data.push($(this).attr('id_status'));
+                    data.push($(this).attr('id_tip'));
+                    data.push($(this).attr('korisnicko_ime'));
+                    data.push($(this).attr('ime'));
+                    data.push($(this).attr('prezime'));
+                    data.push($(this).attr('email'));
+                    data.push($(this).attr('slika'));
+                    data.push($(this).attr('aktivacijski_kod'));
+                    data.push($(this).attr('neuspjesne_prijave'));
+                    data.push($(this).attr('blokiran_do'));
+                    data.push($(this).attr('lozinka'));
+                    dodajNoviRed(data);
         });
-    });
+    });    
 }
