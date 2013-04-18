@@ -208,76 +208,37 @@ window.onload = function() {
 $('#btnXML').click(function(){btnXML();});
 $('#btnJSON').click(function(){btnJSON();});
 
-
 function btnXML(){
-    initTable();
-    dohvatiXML();
-}
-
-function btnJSON(){
-    initTable();    
-    dohvatiJSON();
-}
-
-function initTable(){
-    $('table').html('\
-<tr>\
-<th>id_korisnik</th>\
-<th>id_status</th>\
-<th>id_tip</th>\
-<th>korisnicko_ime</th>\
-<th>ime</th>\
-<th>prezime</th>\
-<th>email</th>\
-<th>slika</th>\
-<th>aktivacijski_kod</th>\
-<th>neuspjesne_prijave</th>\
-<th>blokiran_do</th>\
-<th>lozinka</th>\
-</tr>\
-');
-}
-
-function dodajNoviRed(data){
-    var $red = $('\
-<tr>\
-<td>'+$(data).attr('id_korisnik')+'</td>\
-<td>'+$(data).attr('id_status')+'</td>\
-<td>'+$(data).attr('id_tip')+'</td>\
-<td>'+$(data).attr('korisnicko_ime')+'</td>\
-<td>'+$(data).attr('ime')+'</td>\
-<td>'+$(data).attr('prezime')+'</td>\
-<td>'+$(data).attr('email')+'</td>\
-<td>'+$(data).attr('slika')+'</td>\
-<td>'+$(data).attr('aktivacijski_kod')+'</td>\
-<td>'+$(data).attr('neuspjesne_prijave')+'</td>\
-<td>'+$(data).attr('blokiran_do')+'</td>\
-<td>'+$(data).attr('lozinka')+'</td>\
-</tr>\
-');
-    $('table').append($red);
-}
-
-function dohvatiXML(){
     $.ajax({
         url:'podaci/korisnici.xml',
         type: 'GET',
         dataType: 'xml',
         success: function(xml) {
+            var tablica = $('<table id="tablica">');
+            tablica.append('<thead><tr><th>Ime</th><th>Prezime</th><th>Email</th></tr></thead>');
+            var tbody = $('<tbody>');
             $(xml).find('korisnici').each(function() {               
                 $(this).children().each(function(){
-                    dodajNoviRed(this);
+                    tbody.append('<tr><td>' + $(this).attr('ime') + '</td><td>' + $(this).attr('prezime') +'</td><td>'+ $(this).attr('email') +'</td></tr>');
                 });                
             });
+            tablica.append(tbody);
+            $('#content').html(tablica);
+            $('#tablica').dataTable();
         }
     });
 }
 
-function dohvatiJSON(){   
-    var data = new Array();    
-    $.getJSON("podaci/korisnici.json", function(json){
-        $.each(json, function (index, value) {            
-            dodajNoviRed(value);
-        });
+function btnJSON(){
+    $.getJSON('podaci/korisnici.json', function(data){
+        var tablica = $('<table id="tablica">');
+        tablica.append('<thead><tr><th>Ime</th><th>Prezime</th><th>Email</th></tr></thead>');
+        var tbody = $('<tbody>');
+        for(i = 0; i < data.length; i++) {
+            tbody.append('<tr><td>' + data[i].ime + '</td><td>' + data[i].prezime+'</td><td>'+data[i].email+'</td></tr>')  ;              
+        }
+        tablica.append(tbody);
+        $('#content').html(tablica);
+        $('#tablica').dataTable();
     });
 }
