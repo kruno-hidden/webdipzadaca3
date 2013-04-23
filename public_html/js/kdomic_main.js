@@ -24,7 +24,7 @@ function checkUsername(){
     var username = $('#korisnicko').val();
     var ok;
     $.ajax({
-        url:'korisnik.php?korisnik='+username,
+        url:'podaci/korisnik.php?korisnik='+username,
         async:false,
         type: 'GET',
         dataType: 'xml',
